@@ -3,18 +3,45 @@ import PropTypes from 'prop-types';
 import Header from '../Components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../Components/MusicCard';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 import Loading from '../Components/Loading';
 
 class Album extends Component {
-  state = { idAlbum: 0, infoAlbum: [], listMusics: [], isLoading: false };
+  state = {
+    idAlbum: 0,
+    infoAlbum: [],
+    listMusics: [],
+    isLoading: false,
+    favoriteSongs: [],
+  };
 
   componentDidMount() {
     this.setIdAlbum();
+    this.reloadFavoriteSongs();
   }
 
+  checkedSongs = () => {
+    const { listMusics, favoriteSongs } = this.state;
+    favoriteSongs.forEach((song) => {
+      const selectMusic = listMusics.findIndex((music) => music.trackId === song.trackId);
+      listMusics[selectMusic].checked = true;
+    });
+    this.setState({ listMusics });
+  };
+
+  reloadFavoriteSongs = async () => {
+    this.setState({ isLoading: true });
+    const list = await getFavoriteSongs();
+    console.log(list);
+    this.setState({ favoriteSongs: list, isLoading: false }, this.checkedSongs);
+  };
+
   setIdAlbum = () => {
-    const { match: { params: { id } } } = this.props;
+    const {
+      match: {
+        params: { id },
+      },
+    } = this.props;
     if (id) {
       this.setState({ idAlbum: id }, this.getMusicList);
     }
@@ -34,7 +61,9 @@ class Album extends Component {
     const { name, checked } = event.target;
 
     const musicInfo = listMusics.find((music) => music.trackId === +name);
-    const selectMusic = listMusics.findIndex((music) => music.trackId === +name);
+    const selectMusic = listMusics.findIndex(
+      (music) => music.trackId === +name,
+    );
     listMusics[selectMusic].checked = checked;
 
     const result = await addSong(musicInfo);
@@ -50,7 +79,9 @@ class Album extends Component {
       <div data-testid="page-album">
         Album
         <Header />
-        { isLoading ? (<Loading />) : (
+        {isLoading ? (
+          <Loading />
+        ) : (
           <section>
             <div>
               <h1 data-testid="artist-name">{infoAlbum.artistName}</h1>
@@ -66,7 +97,6 @@ class Album extends Component {
                   setIdFavorite={ this.setIdFavorite }
                   music={ music }
                   checked={ music.checked }
-
                 />
               ))}
             </div>
@@ -80,6 +110,7 @@ class Album extends Component {
 Album.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.string,
-  }).isRequired };
+  }).isRequired,
+};
 
 export default Album;
