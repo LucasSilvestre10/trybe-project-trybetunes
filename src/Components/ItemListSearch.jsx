@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 class ItemListSearch extends Component {
   render() {
-    const { collectionName, key, artworkUrl100, collectionId } = this.props;
+    const { collectionName, artworkUrl100, collectionId } = this.props;
     return (
-      <div htmlFor={ key } id={ key }>
+      <div htmlFor={ collectionId } id={ collectionId }>
         {collectionName ? (
           <>
             <p>{collectionName}</p>
@@ -29,7 +29,6 @@ class ItemListSearch extends Component {
 
 ItemListSearch.propTypes = {
   collectionName: PropTypes.string.isRequired,
-  key: PropTypes.string.isRequired,
   artworkUrl100: PropTypes.string.isRequired,
   collectionId: PropTypes.number.isRequired,
 };
