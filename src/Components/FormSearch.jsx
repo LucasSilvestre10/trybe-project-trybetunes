@@ -1,19 +1,10 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class FormSearch extends Component {
-  state = {
-    inputSearch: '',
-  };
-
-  setNewState = (event) => {
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-    });
-  };
-
   render() {
-    const { inputSearch } = this.state;
+    const { inputSearch, setNewState, searchList } = this.props;
+
     const MIN_SEARCH = 2;
     return (
       <form>
@@ -21,11 +12,12 @@ class FormSearch extends Component {
           <input
             name="inputSearch"
             value={ inputSearch }
-            onChange={ this.setNewState }
+            onChange={ setNewState }
             data-testid="search-artist-input"
             type="text"
           />
           <button
+            onClick={ searchList }
             disabled={ inputSearch.length < MIN_SEARCH }
             type="button"
             data-testid="search-artist-button"
@@ -37,5 +29,10 @@ class FormSearch extends Component {
     );
   }
 }
+FormSearch.propTypes = {
+  inputSearch: PropTypes.string.isRequired,
+  setNewState: PropTypes.func.isRequired,
+  searchList: PropTypes.func.isRequired,
+};
 
 export default FormSearch;
