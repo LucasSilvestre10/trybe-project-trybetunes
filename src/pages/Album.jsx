@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import Header from '../Components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../Components/MusicCard';
+import { addSong } from '../services/favoriteSongsAPI';
+import Loading from '../Components/Loading';
 
 class Album extends Component {
-  state = { idAlbum: 0, infoAlbum: [], listMusics: [] };
+  state = { idAlbum: 0, infoAlbum: [], listMusics: [], isLoading: false };
 
   componentDidMount() {
     this.setIdAlbum();
@@ -24,31 +26,52 @@ class Album extends Component {
     const info = list[0];
     const musics = list.filter((music) => music.trackName);
     this.setState({ infoAlbum: info, listMusics: musics });
-    console.log(musics);
-    console.log(info);
+  };
+
+  setIdFavorite = async (event) => {
+    this.setState({ isLoading: true });
+    const { listMusics } = this.state;
+    const { name, checked } = event.target;
+
+    const musicInfo = listMusics.find((music) => music.trackId === +name);
+    const selectMusic = listMusics.findIndex((music) => music.trackId === +name);
+    listMusics[selectMusic].checked = checked;
+
+    const result = await addSong(musicInfo);
+
+    if (result) {
+      this.setState({ isLoading: false });
+    }
   };
 
   render() {
-    const { infoAlbum, listMusics } = this.state;
+    const { infoAlbum, listMusics, isLoading } = this.state;
     return (
       <div data-testid="page-album">
         Album
         <Header />
-        <div>
-          <h1 data-testid="artist-name">{infoAlbum.artistName}</h1>
-          <h1 data-testid="album-name">{infoAlbum.collectionName}</h1>
-        </div>
-        <div>
-          {listMusics.map((music) => (
-            <MusicCard
-              key={ music.trackId }
-              trackId={ music.trackId }
-              trackName={ music.trackName }
-              previewUrl={ music.previewUrl }
+        { isLoading ? (<Loading />) : (
+          <section>
+            <div>
+              <h1 data-testid="artist-name">{infoAlbum.artistName}</h1>
+              <h1 data-testid="album-name">{infoAlbum.collectionName}</h1>
+            </div>
+            <div>
+              {listMusics.map((music) => (
+                <MusicCard
+                  key={ music.trackId }
+                  trackId={ music.trackId }
+                  trackName={ music.trackName }
+                  previewUrl={ music.previewUrl }
+                  setIdFavorite={ this.setIdFavorite }
+                  music={ music }
+                  checked={ music.checked }
 
-            />
-          ))}
-        </div>
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     );
   }
