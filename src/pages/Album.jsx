@@ -32,7 +32,7 @@ class Album extends Component {
   reloadFavoriteSongs = async () => {
     this.setState({ isLoading: true });
     const list = await getFavoriteSongs();
-    console.log(list);
+    // console.log(list);
     this.setState({ favoriteSongs: list, isLoading: false }, this.checkedSongs);
   };
 
@@ -52,6 +52,10 @@ class Album extends Component {
     const list = await getMusics(idAlbum);
     const info = list[0];
     const musics = list.filter((music) => music.trackName);
+    musics.forEach((music) => {
+      music.checked = false;
+    });
+    // console.log(musics);
     this.setState({ infoAlbum: info, listMusics: musics });
   };
 
