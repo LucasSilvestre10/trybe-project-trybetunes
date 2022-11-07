@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../Components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../Components/MusicCard';
-import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from '../Components/Loading';
 
 class Album extends Component {
@@ -59,7 +59,7 @@ class Album extends Component {
     this.setState({ infoAlbum: info, listMusics: musics });
   };
 
-  setIdFavorite = async (event) => {
+  setFavorite = async (event) => {
     this.setState({ isLoading: true });
     const { listMusics } = this.state;
     const { name, checked } = event.target;
@@ -69,8 +69,12 @@ class Album extends Component {
       (music) => music.trackId === +name,
     );
     listMusics[selectMusic].checked = checked;
-
-    const result = await addSong(musicInfo);
+    let result = '';
+    if (checked === true) {
+      result = await addSong(musicInfo);
+    } else {
+      result = await removeSong(musicInfo);
+    }
 
     if (result) {
       this.setState({ isLoading: false });
@@ -98,7 +102,7 @@ class Album extends Component {
                   trackId={ music.trackId }
                   trackName={ music.trackName }
                   previewUrl={ music.previewUrl }
-                  setIdFavorite={ this.setIdFavorite }
+                  setFavorite={ this.setFavorite }
                   music={ music }
                   checked={ music.checked }
                 />
