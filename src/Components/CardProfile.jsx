@@ -40,7 +40,7 @@ CardProfile.propTypes = {
   name: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  img: PropTypes.string.isRequired,
+
 };
 
 export default CardProfile;
