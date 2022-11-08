@@ -21,6 +21,7 @@ class MusicCard extends Component {
         >
           Favorita
           <input
+            id={ trackId }
             checked={ checked }
             className="favorite-input"
             name={ trackId }
