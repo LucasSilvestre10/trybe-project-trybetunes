@@ -28,6 +28,7 @@ class CardProfile extends Component {
           </h3>
           <p>{description}</p>
         </label>
+
         <Link to="/profile/edit">Editar perfil</Link>
 
       </div>
